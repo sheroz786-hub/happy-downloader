@@ -13,6 +13,7 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
 VENV_PY = sys.executable
+COOKIES = BASE / "youtube_cookies.txt"
 YTDLP = [VENV_PY, "-m", "yt_dlp"]
 FILES = BASE / "files"
 FILES.mkdir(exist_ok=True)
@@ -63,9 +64,11 @@ def process(job_id):
             selector = f"bv*[height<={height}]+ba/b[height<={height}]/b"
         cmd = YTDLP + ["-f", selector, "--merge-output-format", "mp4",
                        "-o", out, "--no-playlist", "--no-warnings",
-                       "--extractor-args", "youtube:player_client=ios,android",
-                       "--socket-timeout", "30", "--retries", "10",
-                       "--fragment-retries", "10", "--progress", url]
+                       "--extractor-args", "youtube:player_client=ios,android"]
+        if COOKIES.exists():
+            cmd += ["--cookies", str(COOKIES)]
+        cmd += ["--socket-timeout", "30", "--retries", "10",
+                "--fragment-retries", "10", "--progress", url]
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              text=True, start_new_session=True)
         for line in p.stdout:

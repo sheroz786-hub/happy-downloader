@@ -19,6 +19,7 @@ from flask import Flask, jsonify, request, send_file, Response
 
 BASE = Path(__file__).resolve().parent
 VENV_PY = sys.executable  # works both locally (venv) and in Docker (system python)
+COOKIES = BASE / "youtube_cookies.txt"
 YTDLP = [str(VENV_PY), "-m", "yt_dlp"]
 FFMPEG = shutil.which("ffmpeg") or "/usr/bin/ffmpeg"
 FILES = BASE / "files"
@@ -101,11 +102,14 @@ def info():
     if not url or not url.startswith("http"):
         return jsonify({"ok": False, "error": "valid video URL required"}), 400
     try:
-        # Use ios+android clients to bypass YouTube bot detection
-        p = run(YTDLP + ["--dump-json", "--no-download", "--no-playlist",
-                          "--no-warnings",
-                          "--extractor-args", "youtube:player_client=ios,android",
-                          url], timeout=90)
+        # Use ios+android clients + cookies to bypass YouTube bot detection
+        cmd_args = ["--dump-json", "--no-download", "--no-playlist",
+                    "--no-warnings",
+                    "--extractor-args", "youtube:player_client=ios,android"]
+        if COOKIES.exists():
+            cmd_args += ["--cookies", str(COOKIES)]
+        cmd_args.append(url)
+        p = run(YTDLP + cmd_args, timeout=90)
         if p.returncode != 0:
             return jsonify({"ok": False, "error": (p.stderr or "yt-dlp failed")[-500:]}), 502
         meta = json.loads(p.stdout)
