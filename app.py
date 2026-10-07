@@ -8,6 +8,7 @@ import re
 import secrets
 import shutil
 import subprocess
+import sys
 import threading
 import time
 import uuid
@@ -17,7 +18,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request, send_file, Response
 
 BASE = Path(__file__).resolve().parent
-VENV_PY = BASE / "venv" / "bin" / "python"
+VENV_PY = sys.executable  # works both locally (venv) and in Docker (system python)
 YTDLP = [str(VENV_PY), "-m", "yt_dlp"]
 FFMPEG = shutil.which("ffmpeg") or "/usr/bin/ffmpeg"
 FILES = BASE / "files"

@@ -12,8 +12,8 @@ import uuid
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-VENV_PY = BASE / "venv" / "bin" / "python"
-YTDLP = [str(VENV_PY), "-m", "yt_dlp"]
+VENV_PY = sys.executable
+YTDLP = [VENV_PY, "-m", "yt_dlp"]
 FILES = BASE / "files"
 FILES.mkdir(exist_ok=True)
 
