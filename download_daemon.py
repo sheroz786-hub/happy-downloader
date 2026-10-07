@@ -63,6 +63,7 @@ def process(job_id):
             selector = f"bv*[height<={height}]+ba/b[height<={height}]/b"
         cmd = YTDLP + ["-f", selector, "--merge-output-format", "mp4",
                        "-o", out, "--no-playlist", "--no-warnings",
+                       "--extractor-args", "youtube:player_client=android",
                        "--socket-timeout", "30", "--retries", "10",
                        "--fragment-retries", "10", "--progress", url]
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
