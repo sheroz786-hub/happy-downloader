@@ -101,10 +101,10 @@ def info():
     if not url or not url.startswith("http"):
         return jsonify({"ok": False, "error": "valid video URL required"}), 400
     try:
-        # Use android client to bypass YouTube bot detection
+        # Use ios+android clients to bypass YouTube bot detection
         p = run(YTDLP + ["--dump-json", "--no-download", "--no-playlist",
                           "--no-warnings",
-                          "--extractor-args", "youtube:player_client=android",
+                          "--extractor-args", "youtube:player_client=ios,android",
                           url], timeout=90)
         if p.returncode != 0:
             return jsonify({"ok": False, "error": (p.stderr or "yt-dlp failed")[-500:]}), 502
